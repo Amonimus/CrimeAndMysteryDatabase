@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Works</h1>
+<ul>
+	{% for work in works %}
+	<li><a href="/work/{{ work.id }}">{{ work.name }}</a></li>
+	{% endfor %}
+</ul>
+{% endblock %}

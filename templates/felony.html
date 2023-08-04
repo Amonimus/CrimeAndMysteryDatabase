@@ -1,0 +1,31 @@
+<table>
+	<tr>
+		<td colspan="2">{{ felony.name }}</td>
+	</tr>
+	<tr>
+		<td>Crime</td>
+		{% set crime = felony.crime_id|fk("felonies", "crime_id") %}
+		<td>{{ crime.name }}</td>
+	</tr>
+	<tr>
+		<td>Location</td>
+		<td>{{ felony.location }}</td>
+	</tr>
+	<tr>
+		<td>Victims</td>
+		<td>{{ felony.victims }}</td>
+	</tr>
+	<tr>
+		<td>Culprit</td>
+		{% set culprit = felony.culprit_id|fk("felonies", "culprit_id") %}
+		<td><a href="/criminal/{{ culprit.id }}">{{ culprit.name }}</a></td>
+	</tr>
+	<tr>
+		<td>Method</td>
+		<td>{{ felony.method }}</td>
+	</tr>
+	<tr>
+		<td>Motive</td>
+		<td>{{ felony.motive }}</td>
+	</tr>
+</table>

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Criminals</h1>
+<ul>
+	{% for criminal in criminals %}
+	<li><a href="/criminal/{{ criminal.id }}">{{ criminal.name }}</a></li>
+	{% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}{{ name }}{% endblock %}
+{% block content %}
+    <h1>{{ case.name }}</h1>
+    <h2>Crimes</h2>
+	{% for felony in felonies %}
+    {% include "felony.html" %}
+	{% endfor %}
+{% endblock %}

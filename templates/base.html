@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+<div id="page">
+    <div id="sidebar">
+        <a href="/">Main Page</a>
+
+        <h2>Indexes:</h2>
+        <ul>
+            <li><a href="/list/cases">Cases</a></li>
+            <li><a href="/list/criminals">Criminals</a></li>
+            <li><a href="/list/works">Media</a></li>
+            <li><a href="/list/works">Info</a></li>
+            <li><a href="/list/works">Editor</a></li>
+        </ul>
+    </div>
+    <div id="article">
+        {% block content %}{% endblock %}
+    </div>
+</div>
+</body>
+</html>
