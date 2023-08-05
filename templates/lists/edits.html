@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Editor{% endblock %}
+{% block content %}
+<h1>Tables</h1>
+<ul>
+	{% for table in tables %}
+	<li><a href="/edit/{{ table.name }}">{{ table.name }}</a></li>
+	{% endfor %}
+</ul>
+{% endblock %}

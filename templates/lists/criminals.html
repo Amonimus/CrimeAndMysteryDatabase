@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Criminals{% endblock %}
+{% block content %}
+<h1>Criminals</h1>
+<ul>
+	{% for criminal in criminals %}
+	{% set work = criminal.work_id|fk("criminals", "work_id") %}
+	<li><a href="/criminal/{{ criminal.id }}">{{ criminal.name }} ({{ work.name }})</a></li>
+	{% endfor %}
+</ul>
+{% endblock %}

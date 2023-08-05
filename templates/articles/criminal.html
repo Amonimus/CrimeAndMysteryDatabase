@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% block title %}{{ name }}{% endblock %}
+{% block title %}{{ criminal.name }}{% endblock %}
 {% block content %}
 	{% set work = criminal.work_id|fk("criminals", "work_id") %}
 	{% set organization = criminal.organization_id|fk("criminals", "organization_id") %}
-    <h1>{{ criminal.name }} from {{ work.name }}</h1>
+    <h1>{{ criminal.name }} from <a href="/work/{{ work.id }}">{{ work.name }}</a></h1>
 	A member of {{ organization.name }}.
     <h2>Charges</h2>
 	{% for felony in felonies %}
-    {% include "felony.html" %}
+    {% include "modules/felony.html" %}
 	{% endfor %}
 {% endblock %}

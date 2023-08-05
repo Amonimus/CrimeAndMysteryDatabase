@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% block title %}{{ name }}{% endblock %}
+{% block title %}{{ case.name }}{% endblock %}
 {% block content %}
     <h1>{{ case.name }}</h1>
     <h2>Crimes</h2>
 	{% for felony in felonies %}
-    {% include "felony.html" %}
+    {% include "modules/felony.html" %}
 	{% endfor %}
 {% endblock %}

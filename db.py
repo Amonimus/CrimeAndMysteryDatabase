@@ -1,4 +1,5 @@
 import sqlite3
+from typing import List
 
 
 def get_db_connection():
@@ -8,58 +9,67 @@ def get_db_connection():
 	return conn
 
 
-def sql_select(rows):
+def sql_select(rows: str) -> str:
 	return f"SELECT {rows}"
 
 
-def sql_from(sql, table):
+def sql_from(sql: str, table: str) -> str:
 	sql += f" FROM {table}"
 	return sql
 
 
-def sql_where(sql, column, condition):
+def sql_where(sql: str, column: str, condition: str) -> str:
 	sql += f" WHERE {column}={condition}"
 	return sql
 
-def sql_order(sql, column, method):
+
+def sql_order(sql: str, column: str, method: str) -> str:
 	sql += f" ORDER BY {column} {method}"
 	return sql
 
 
-def fetch(table) -> list:
-	conn: sqlite3.Connection = get_db_connection()
-	sql = sql_from(sql_select('*'), table)
-	result: list = conn.execute(sql).fetchall()
-	conn.close()
-	return result
+def query(func):
+	def wrapper(*args, **kwargs) -> List[sqlite3.Row]:
+		conn: sqlite3.Connection = get_db_connection()
+		sql: str = func(*args)
+		result: List[sqlite3.Row] = conn.execute(sql).fetchall()
+		conn.close()
+		return result
+
+	return wrapper
 
 
-def fetch_id(table, id) -> dict:
-	conn: sqlite3.Connection = get_db_connection()
-	sql = sql_where(sql_from(sql_select('*'), table), 'id', id)
-	result: dict = conn.execute(sql).fetchone()
-	conn.close()
-	return result
+@query
+def fetch(table: str) -> List[sqlite3.Row]:
+	return sql_from(sql_select('*'), table)
 
 
-def fetch_condition(table, column, condition) -> list:
-	conn: sqlite3.Connection = get_db_connection()
-	sql = sql_where(sql_from(sql_select('*'), table), column, condition)
-	result: list = conn.execute(sql).fetchall()
-	conn.close()
-	return result
-
-def fetch_condition_ordered(table, column, condition, order_column, order) -> list:
-	conn: sqlite3.Connection = get_db_connection()
-	sql = sql_order(sql_where(sql_from(sql_select('*'), table), column, condition), order_column, order)
-	result: list = conn.execute(sql).fetchall()
-	conn.close()
-	return result
+@query
+def fetch_id(table: str, id: int) -> List[sqlite3.Row]:
+	return sql_where(sql_from(sql_select('*'), table), 'id', id)
 
 
-def table_info(table):
-	conn: sqlite3.Connection = get_db_connection()
-	sql = f"PRAGMA foreign_key_list({table});"
-	result: list = conn.execute(sql).fetchall()
-	conn.close()
-	return result
+@query
+def fetch_condition(table: str, column: str, condition: str) -> List[sqlite3.Row]:
+	return sql_where(sql_from(sql_select('*'), table), column, condition)
+
+
+@query
+def fetch_condition_ordered(table: str, column: str, condition: str, order_column: str, order: str) -> List[
+	sqlite3.Row]:
+	return sql_order(sql_where(sql_from(sql_select('*'), table), column, condition), order_column, order)
+
+
+@query
+def table_info(table: str) -> List[sqlite3.Row]:
+	return f"PRAGMA foreign_key_list({table});"
+
+
+@query
+def column_list(table: str) -> List[sqlite3.Row]:
+	return f"PRAGMA table_info({table});"
+
+
+@query
+def table_list() -> List[sqlite3.Row]:
+	return f"PRAGMA table_list;"
