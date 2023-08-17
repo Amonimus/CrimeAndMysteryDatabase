@@ -2,7 +2,7 @@ from flask import render_template
 import sqlite3
 from typing import List
 from flask import Flask
-from db import fetch, table_list
+from db import fetch, get_table_list
 
 
 def main_lists(app: Flask):
@@ -23,5 +23,6 @@ def main_lists(app: Flask):
 
 	@app.route("/list/edits")
 	def edits() -> str:
-		tables: List[sqlite3.Row] = table_list()
+		tables: List[sqlite3.Row] = get_table_list()
+		tables = [table for table in tables if "sqlite" not in table["name"]]
 		return render_template('lists/edits.html', tables=tables)

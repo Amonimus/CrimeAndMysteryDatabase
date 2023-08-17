@@ -4,6 +4,7 @@ from typing import List
 
 def get_db_connection():
 	conn: sqlite3.Connection = sqlite3.connect('database.db')
+	conn.isolation_level = None
 	conn.execute("PRAGMA foreign_keys = 1")
 	conn.row_factory = sqlite3.Row
 	return conn
@@ -59,17 +60,38 @@ def fetch_condition_ordered(table: str, column: str, condition: str, order_colum
 	sqlite3.Row]:
 	return sql_order(sql_where(sql_from(sql_select('*'), table), column, condition), order_column, order)
 
+# @query
+# def insert(table: str, data: dict):
+# 	columns = (str(list(data.keys()))[1:-1])
+# 	values = (str(list(data.values()))[1:-1])
+# 	sql = f"INSERT INTO {table} ({columns}) VALUES ({values})"
+# 	print(sql)
+# 	return sql
+
+def insert(table: str, data: dict):
+	columns = ', '.join(data.keys())
+	placeholders = ', '.join('?' * len(data))
+	sql = 'INSERT INTO {} ({}) VALUES ({})'.format(table, columns, placeholders)
+	values = [int(x) if isinstance(x, bool) else x for x in data.values()]
+	print(sql)
+	print(values)
+
+	conn: sqlite3.Connection = get_db_connection()
+	result: List[sqlite3.Row] = conn.execute(sql, values).fetchall()
+	print(result)
+	conn.close()
+
 
 @query
-def table_info(table: str) -> List[sqlite3.Row]:
+def get_foreign_keys(table: str) -> List[sqlite3.Row]:
 	return f"PRAGMA foreign_key_list({table});"
 
 
 @query
-def column_list(table: str) -> List[sqlite3.Row]:
+def get_table_info(table: str) -> List[sqlite3.Row]:
 	return f"PRAGMA table_info({table});"
 
 
 @query
-def table_list() -> List[sqlite3.Row]:
+def get_table_list() -> List[sqlite3.Row]:
 	return f"PRAGMA table_list;"
