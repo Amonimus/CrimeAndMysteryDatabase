@@ -73,13 +73,24 @@ def insert(table: str, data: dict):
 	placeholders = ', '.join('?' * len(data))
 	sql = 'INSERT INTO {} ({}) VALUES ({})'.format(table, columns, placeholders)
 	values = [int(x) if isinstance(x, bool) else x for x in data.values()]
-	print(sql)
-	print(values)
 
 	conn: sqlite3.Connection = get_db_connection()
 	result: List[sqlite3.Row] = conn.execute(sql, values).fetchall()
-	print(result)
+
 	conn.close()
+	return result
+
+def update(table: str, data: dict):
+	row_id = data["id"]
+	del data["id"]
+	sql = 'UPDATE {} SET {} WHERE id={}'.format(table, ', '.join('{}=?'.format(k) for k in data), row_id)
+	values = [int(x) if isinstance(x, bool) else x for x in data.values()]
+
+	conn: sqlite3.Connection = get_db_connection()
+	result: List[sqlite3.Row] = conn.execute(sql, values).fetchall()
+
+	conn.close()
+	return result
 
 
 @query

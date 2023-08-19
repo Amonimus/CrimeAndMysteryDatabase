@@ -1,12 +1,12 @@
 html {
 	background-color: #19262E;
-	#color: #C6D4DF;
-	color: white;
+	color: #C6D4DF;
+	#color: white;
 	font-family: Arial, Helvetica, sans-serif;
 }
 
 a, a:visited {
-	color: cyan;
+	color: RoyalBlue;
 	text-decoration: none;
 }
 
@@ -35,4 +35,8 @@ table, th, td {
 
 table {
 	margin: 16px;
+}
+
+input, select {
+    background-color: #C6D4DF;
 }

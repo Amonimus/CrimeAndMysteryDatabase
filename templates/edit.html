@@ -4,45 +4,69 @@
 <h1>{{ table_name }}</h1>
 <table>
     <tr>
-        {% for column in columns %}
-        <th>{{ column.name|replace("_id", "") }}</th>
+        <th>Action</th>
+        {% for column in table[0] %}
+        <th>{{ column|replace("_id", "") }}</th>
         {% endfor %}
     </tr>
     {% for row in table %}
     <tr>
-        {% for key, value in row.items() %}
-        <td>
-            {% set fk_row = value|fk(table_name, key) %}
-            {% if fk_row.name %}
-            <i>
-                {{ fk_row.name }}
-            </i>
-            {% else %}
-                {{ fk_row }}
-            {% endif %}
-        </td>
-        {% endfor %}
+        <form method="post">
+            <input type="hidden" name="action" value="update">
+            <input type="hidden" name="table" value="{{ table_name }}">
+            <td>
+                <button type="submit">Save</button>
+            </td>
+            {% for key, item in row.items() %}
+            <td>
+                {% if item.type == 'INTEGER' %}
+                <input type="number" name="{{ key }}"
+                       {% if item.value.__class__.__name__ != 'NoneType' %}
+                       value="{{ item.value }}"
+                       {% endif %}
+                >
+                {% elif item.type == 'TEXT' %}
+                <input type="text" name="{{ key }}"
+                       {% if item.value.__class__.__name__ != 'NoneType' %}
+                       value="{{ item.value }}"
+                       {% endif %}
+                >
+                {% elif item.type == 'FK' %}
+                {% set fk_table = key|get_fk_values(fk_keys) %}
+                <select name="{{ key }}">
+                    <option value="">-</option>
+                    {% for fk_row in fk_table %}
+                    <option value="{{ fk_row.id }}" {% if fk_row.id == item.value %}selected{% endif %}>{{ fk_row.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+                {% endif %}
+            </td>
+            {% endfor %}
+        </form>
     </tr>
     {% endfor %}
     <tr>
         <form method="post">
+            <input type="hidden" name="action" value="add">
             <input type="hidden" name="table" value="{{ table_name }}">
             <td>
                 <button type="submit">Add</button>
             </td>
-            {% for column in columns[1:] %}
+            {% for column in columns %}
             <td>
-                {% set is_fk = column.name|is_fk(keys) %}
-                {% if is_fk == True %}
-                    {% set remote_values = column.name|get_fk_values(keys) %}
-                    <select name="{{ column.name }}">
+                {% if column.type == 'INTEGER' %}
+                <input type="number" name="{{ column.name }}">
+                {% elif column.type == 'TEXT' %}
+                <input type="text" name="{{ column.name }}">
+                {% elif column.type == 'FK' %}
+                {% set fk_table = column.name|get_fk_values(fk_keys) %}
+                <select name="{{ column.name }}">
                     <option value="">-</option>
-                    {% for value in remote_values %}
-                        <option value="{{ value.id }}">{{ value.name }}</option>
+                    {% for fk_row in fk_table %}
+                    <option value="{{ fk_row.id }}">{{ fk_row.name }}</option>
                     {% endfor %}
-                    </select>
-                {% else %}
-                    <input type="text" name="{{ column.name }}">
+                </select>
                 {% endif %}
             </td>
             {% endfor %}
